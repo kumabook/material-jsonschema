@@ -1,5 +1,5 @@
-var Form  = require('./lib/Form');
-var Table = require('./lib/Table');
+var Form  = require('./lib/Form').default;
+var Table = require('./lib/Table').default;
 
 module.exports = {
   Form:  Form,
