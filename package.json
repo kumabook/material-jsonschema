@@ -1,0 +1,26 @@
+{
+  "name": "material-jsonschema",
+  "version": "0.0.1",
+  "description": "My opinionated ui components(Table and Form) from JSON Schema with material-ui",
+  "main": "index.js",
+  "repository": "https://github.com/kumabook/material-jsonschema",
+  "author": "Hiroki Kumamoto <kumabook@live.jp>",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel src --out-dir lib"
+  },
+  "dependencies": {
+    "material-ui": "^0.18.1",
+    "prop-types": "^15.5.10",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-paginate": "^4.4.2",
+    "react-s3-uploader": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1"
+  }
+}
