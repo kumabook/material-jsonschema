@@ -1,6 +1,6 @@
 {
   "name": "material-jsonschema",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "My opinionated ui components(Table and Form) from JSON Schema with material-ui",
   "main": "index.js",
   "repository": "https://github.com/kumabook/material-jsonschema",
