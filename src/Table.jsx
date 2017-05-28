@@ -226,7 +226,7 @@ class ResourceTable extends React.Component {
             )];
           case 'audio':
             return [name, (
-              <audio controls src={item[name]} />
+              <audio controls><track kind="captions" src={item[name]} /></audio>
             )];
           default:
             return [name, item[name]];
