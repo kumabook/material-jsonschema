@@ -54,9 +54,24 @@ class ResourceTable extends React.Component {
       perPage:      PropTypes.number.isRequired,
       pageCount:    PropTypes.number.isRequired,
       onPageChange: PropTypes.func.isRequired,
-      onCreate:     PropTypes.func.isRequired,
-      onUpdate:     PropTypes.func.isRequired,
-      onDestroy:    PropTypes.func.isRequired,
+      canCreate:    PropTypes.bool,
+      canEdit:      PropTypes.bool,
+      canDestroy:   PropTypes.bool,
+      onCreate:     PropTypes.func,
+      onUpdate:     PropTypes.func,
+      onDestroy:    PropTypes.func,
+      onAction:     PropTypes.func,
+    };
+  }
+  static get defaultProps() {
+    return {
+      canCreate:  true,
+      canEdit:    true,
+      canDestroy: true,
+      onCreate:   () => {},
+      onUpdate:   () => {},
+      onDestroy:  () => {},
+      onAction:   () => {},
     };
   }
   constructor(props) {
@@ -172,8 +187,8 @@ class ResourceTable extends React.Component {
         return null;
     }
   }
-  renderHeaderRows(properties) {
-    const headerColumns = properties.map(([name]) => ((
+  renderHeaderRows(entries) {
+    const headerColumns = entries.map(([name]) => ((
       <TableHeaderColumn key={name}>{name}</TableHeaderColumn>
     )));
     headerColumns.push(
@@ -183,9 +198,8 @@ class ResourceTable extends React.Component {
     const { perPage } = this.props;
     return [
       <TableRow key="paginate">
-        <TableHeaderColumn colSpan={1} />
         <TableHeaderColumn
-          colSpan={properties.length - 1}
+          colSpan={entries.length + 1}
           style={{ textAlign: 'center' }}
         >
           <Paginate
@@ -194,16 +208,16 @@ class ResourceTable extends React.Component {
             onChange={({ selected }) => this.props.onPageChange(selected, perPage)
             }
           />
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          colSpan={1}
-        >
-          <FloatingActionButton
-            mini
-            onTouchTap={() => this.handleNewButtonClick()}
-          >
-            <ContentAdd />
-          </FloatingActionButton>
+          {this.props.canCreate ?
+            <FloatingActionButton
+              style={{ marginTop: 15, float: 'right' }}
+              mini
+              onTouchTap={() => this.handleNewButtonClick()}
+            >
+              <ContentAdd />
+            </FloatingActionButton>
+           : null
+          }
         </TableHeaderColumn>
       </TableRow>,
       <TableRow key="props">
@@ -211,10 +225,10 @@ class ResourceTable extends React.Component {
       </TableRow>,
     ];
   }
-  renderRows(properties) {
+  renderRows(entries) {
     const { items, tableSchema } = this.props;
     return items.map((item) => {
-      const columns = properties.map(([name, info]) => {
+      const columns = entries.map(([name, info]) => {
         switch (widgetType(info, tableSchema[name])) {
           case 'link':
             return [name, <a href={item[name]}>{item[name]}</a>];
@@ -232,21 +246,34 @@ class ResourceTable extends React.Component {
             return [name, item[name]];
         }
       }).map(([name, child]) => <TableRowColumn key={name}>{child}</TableRowColumn>);
-      columns.push((
-        <TableRowColumn key="actions">
+      const actions = [];
+      if (this.props.canEdit) {
+        actions.push(
           <FloatingActionButton
+            key="edit"
             mini
             onTouchTap={() => this.handleEditButtonClick(item)}
           >
             <ContentCreate />
-          </FloatingActionButton>
-          &nbsp;
+          </FloatingActionButton>,
+        );
+        actions.push(' ');
+      }
+      if (this.props.canDestroy) {
+        actions.push(
           <FloatingActionButton
+            key="destroy"
             mini
             onTouchTap={() => this.handleDestroyButtonClick(item)}
           >
             <ContentRemove />
-          </FloatingActionButton>
+          </FloatingActionButton>,
+        );
+        actions.push(' ');
+      }
+      columns.push((
+        <TableRowColumn key="actions">
+          {actions}
         </TableRowColumn>
       ));
       return (
@@ -258,19 +285,19 @@ class ResourceTable extends React.Component {
   }
   render() {
     const { schema, tableSchema } = this.props;
-    const properties = Object.entries(schema.properties)
-                             .filter(([name]) => {
-                               const v = tableSchema[name];
-                               return !v || v['ui:widget'] !== 'hidden';
-                             });
+    let entries = Object.entries(schema.properties);
+    entries = entries.filter(([name]) => {
+      const v = tableSchema[name];
+      return !v || v['ui:widget'] !== 'hidden';
+    });
     return (
       <div>
         <Table selectable={false}>
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            {this.renderHeaderRows(properties)}
+            {this.renderHeaderRows(entries)}
           </TableHeader>
           <TableBody displayRowCheckbox={false}>
-            {this.renderRows(properties)}
+            {this.renderRows(entries)}
           </TableBody>
         </Table>
         {this.renderDialog()}
