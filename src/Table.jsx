@@ -247,6 +247,21 @@ class ResourceTable extends React.Component {
         }
       }).map(([name, child]) => <TableRowColumn key={name}>{child}</TableRowColumn>);
       const actions = [];
+      if (Array.isArray(tableSchema['ui:actions'])) {
+        tableSchema['ui:actions'].forEach(({ name, icon }) => {
+          const Icon = icon;
+          actions.push(
+            <FloatingActionButton
+              key={name}
+              mini
+              onTouchTap={() => this.props.onAction(name, item)}
+            >
+              <Icon />
+            </FloatingActionButton>,
+          );
+          actions.push(' ');
+        });
+      }
       if (this.props.canEdit) {
         actions.push(
           <FloatingActionButton
