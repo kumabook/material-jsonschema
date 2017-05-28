@@ -16,12 +16,16 @@ import ContentRemove        from 'material-ui/svg-icons/content/remove';
 import FlatButton           from 'material-ui/FlatButton';
 import Paginate             from './Paginate';
 import Form                 from './Form';
+import isFunc               from './isFunc';
 
 const imageHeight = 44;
 
 const widgetType = (schema, tableSchema) => {
   const type = schema.type;
   const widget = tableSchema && tableSchema['ui:widget'];
+  if (isFunc(widget)) {
+    return 'custom';
+  }
   if (type === 'string') {
     if (schema.format === 'data-url') {
       if (widget === 'img') {
@@ -242,6 +246,18 @@ class ResourceTable extends React.Component {
             return [name, (
               <audio controls><track kind="captions" src={item[name]} /></audio>
             )];
+          case 'custom': {
+            const Widget = tableSchema[name]['ui:widget']
+            return [
+              name,
+              <Widget
+                value={item[name]}
+                name={name}
+                item={item}
+                schema={tableSchema[name]}
+              />,
+            ];
+          }
           default:
             return [name, item[name]];
         }
