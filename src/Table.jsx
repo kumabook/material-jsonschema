@@ -300,7 +300,12 @@ class ResourceTable extends React.Component {
   }
   render() {
     const { schema, tableSchema } = this.props;
+    const orders = tableSchema['ui:order'];
     let entries = Object.entries(schema.properties);
+    if (Array.isArray(orders)) {
+      entries = orders.map(name => [name, schema.properties[name]])
+                      .concat(entries.filter(([name]) => !orders.includes(name)));
+    }
     entries = entries.filter(([name]) => {
       const v = tableSchema[name];
       return !v || v['ui:widget'] !== 'hidden';
