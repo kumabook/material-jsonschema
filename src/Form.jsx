@@ -87,7 +87,7 @@ class Form extends React.Component {
                 hintText={name}
                 floatingLabelText={name}
                 floatingLabelFixed
-                onChange={(event, value) => this.handleValueChange(name, value)}
+                onChange={(event, value) => this.handleValueChange(name, Number.parseFloat(value))}
                 value={this.state.item[name] || 0}
               />
             </div>
