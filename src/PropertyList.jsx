@@ -15,7 +15,11 @@ class PropertyList extends React.Component {
     const listItems = entries.map(([name, info]) => {
       const value = item[name];
       return (
-        <ListItem primaryText={name} secondaryText={value} />
+        <ListItem
+          key={`${schema.title}-${name}`}
+          primaryText={name}
+          secondaryText={value}
+        />
       );
     });
     return (
